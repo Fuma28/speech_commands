@@ -3,18 +3,16 @@ load trainedNet.mat
 load classes.mat
 %%
 % we define the parameters for the classification and the listening
-classificationRate = 20;
-decisionTimeWindow = 1.5;
-frameAgreementThreshold = 50;
+classificationRate = 10;
+frameAgreementThreshold = 0.5;
 probabilityThreshold = 0.7;
 fs = 16e3;
 adr = audioDeviceReader(fs,floor(fs/classificationRate));
 audioBuffer = dsp.AsyncBuffer(fs);
 newSamplesPerUpdate = floor(fs/classificationRate);
-numAnalysisFrame = round((decisionTimeWindow-1)*(classificationRate) + 1);
-countThreshold = round(frameAgreementThreshold/100*numAnalysisFrame);
-YBuffer = repmat(categorical("background"),numAnalysisFrame,1);
-scoreBuffer = zeros(numel(classes),numAnalysisFrame,"single");
+countThreshold = round(frameAgreementThreshold*classificationRate) + 1;
+YBuffer = repmat(categorical("background"),classificationRate,1);
+scoreBuffer = zeros(numel(classes),classificationRate,"single");
 %%
 % we set up the parameters for the feature extraction
 segmentDuration = 1;
